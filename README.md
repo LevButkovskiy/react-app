@@ -17,3 +17,7 @@ yarn dev
 ```
 
 Откройте [http://localhost:3000](http://localhost:3000) с помощью браузера, чтобы увидеть результат.
+
+Framework: NextJS
+DB: MongoDB
+Test: Jest
