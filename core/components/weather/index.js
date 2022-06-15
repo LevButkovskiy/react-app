@@ -1,7 +1,8 @@
 import {Space, message} from "antd"
 import _ from "lodash"
-import {useEffect, useState} from "react"
+import {useEffect, useRef, useState} from "react"
 
+import WSClient from "../../modules/wsc"
 import {apiRequest} from "../../utils/request"
 
 const params = [
@@ -17,6 +18,8 @@ const params = [
 
 export default function WeatherPage() {
 	const [weather, setWeather] = useState({})
+	const [messages, setMessages] = useState([])
+	const wsClient = useRef(null)
 
 	useEffect(() => {
 		navigator.geolocation.getCurrentPosition((position, error) => {
@@ -28,16 +31,28 @@ export default function WeatherPage() {
 					message.error(e)
 				})
 		})
+
+		if (!wsClient.current) {
+			wsClient.current = new WSClient()
+			wsClient.current.on("message", (data) => {
+				setMessages((prev) => [...prev, data])
+			})
+		}
 	}, [])
+
+	const send = () => {
+		wsClient.current.send("SFSF")
+	}
 
 	return (
 		<Space direction='vertical'>
 			{params.map(({title, key, measure}) => (
-				<div>
+				<div onClick={send}>
 					<b>{title}: </b>
 					{_.get(weather, key, "")} {measure}
 				</div>
 			))}
+			{messages}
 		</Space>
 	)
 }

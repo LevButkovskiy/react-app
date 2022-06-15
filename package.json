@@ -6,7 +6,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"test": "jest"
+		"test": "jest",
+		"wss": "node wss/index.js"
 	},
 	"dependencies": {
 		"@ant-design/icons": "^4.7.0",
@@ -29,7 +30,8 @@
 		"react-dom": "17.0.2",
 		"react-redux": "^7.2.6",
 		"sass": "^1.49.7",
-		"url-loader": "^4.1.1"
+		"url-loader": "^4.1.1",
+		"websocket": "^1.0.34"
 	},
 	"devDependencies": {
 		"eslint": "8.6.0",
