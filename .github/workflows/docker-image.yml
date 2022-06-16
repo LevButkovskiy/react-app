@@ -1,19 +1,16 @@
-name: Docker Image CI
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+name: remote ssh command
+on: [push]
 jobs:
 
   build:
-
+    name: Build
     runs-on: ubuntu-latest
-
     steps:
-    - name: Build the Docker image
-      run: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts 
-    - name: Connect
-      run: ssh root@109.107.174.238
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: whoami
