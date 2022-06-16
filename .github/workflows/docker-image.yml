@@ -21,5 +21,5 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
-          git pull
+          git pull - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
           docker-compose up -d --build
