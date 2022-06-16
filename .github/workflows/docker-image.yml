@@ -13,5 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Build the Docker image
-      run: sudo ssh root@109.107.174.238
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+#         key: ${{ secrets.KEY_ED25519 }}
+#         port: ${{ secrets.PORT }}
+#         script: sh yourscript.sh
