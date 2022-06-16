@@ -18,5 +18,6 @@ jobs:
           ls -al
           cd ..
           cd home/react-app/
+          ssh -T git@github.com
           git pull
           docker-compose up -d --build
