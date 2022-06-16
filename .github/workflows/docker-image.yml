@@ -14,4 +14,6 @@ jobs:
 
     steps:
     - name: Build the Docker image
-      run: sudo ssh -tt root@109.107.174.238
+      run: ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts 
+    - name: Connect
+      run: ssh root@109.107.174.238
