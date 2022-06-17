@@ -1,5 +1,5 @@
 export default function Page() {
-	return <>test</>
+	return <>test CD</>
 }
 
 Page.title = "Главная"
