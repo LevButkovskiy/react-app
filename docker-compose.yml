@@ -6,3 +6,11 @@ services:
         ports:
             - 4006:3000
         restart: always
+    wss:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - 8080:8080
+        restart: always
+        command: yarn wss

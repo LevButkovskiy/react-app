@@ -11,7 +11,8 @@ export default class WSClient extends EventEmitter {
 	connect(user = {}) {
 		console.log(user)
 		this.user = user
-		this.client = new W3CWebSocket("ws://localhost:8080/", "echo-protocol", "a", "b", "c", "d")
+		// this.client = new W3CWebSocket("ws://localhost:8080/", "echo-protocol", "a", "b", "c", "d")
+		this.client = new W3CWebSocket("ws://109.107.174.238:8080/", "echo-protocol")
 
 		this.client.onerror = function (error) {
 			console.log("Connect Error: " + error.toString())
