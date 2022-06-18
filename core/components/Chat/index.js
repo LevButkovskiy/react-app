@@ -9,16 +9,21 @@ import Container from "../UI/Container"
 import styles from "./styles.module.scss"
 
 export default function Chat() {
+	const [user, setUser] = useState({})
 	const [message, setMessage] = useState("")
-	const [sender, setSender] = useState("Anonimous")
 	const [messages, setMessages] = useState([])
+	const [to, setTo] = useState("")
 	const wsClient = useRef(null)
 
 	useEffect(() => {
+		const params = new URLSearchParams(location.search)
+		const id = params.get("user")
+		setUser({id})
 		if (!wsClient.current) {
 			wsClient.current = new WSClient()
-			wsClient.current.connect()
+			wsClient.current.connect({id: id})
 			wsClient.current.on("message", (data) => {
+				console.log(data)
 				setMessages((prev) => [...prev, data])
 			})
 		}
@@ -31,8 +36,10 @@ export default function Chat() {
 		}
 	}, [])
 
-	const send = (message = "", from = "") => {
-		wsClient.current.send({message, from, createdAt: new Date()})
+	const send = (message = "", to = "") => {
+		const data = {message, from: _.get(user, "id"), to: to, createdAt: new Date()}
+		setMessages((prev) => [...prev, data])
+		wsClient.current.send(data)
 	}
 
 	useEffect(() => {
@@ -50,7 +57,7 @@ export default function Chat() {
 					<div className={styles.messenger}>
 						<div className={styles.messages} id='messages'>
 							{messages.map(({message, from, createdAt}) => (
-								<div className={`${styles.message} ${from === sender ? styles.personal : styles.other}`}>
+								<div className={`${styles.message} ${from === _.get(user, "id") ? styles.personal : styles.other}`}>
 									<div className={styles.content}>
 										<div className={styles.sender}>{from}</div>
 										<div>{message}</div>
@@ -61,9 +68,9 @@ export default function Chat() {
 						</div>
 						<div className={styles.form} id='form'>
 							<input className={styles.input} value={message} onChange={(e) => setMessage(_.get(e, "target.value", ""))} />
-							<input value={sender} onChange={(e) => setSender(_.get(e, "target.value", ""))} />
+							<input value={to} onChange={(e) => setTo(_.get(e, "target.value", ""))} />
 
-							<button onClick={() => send(message, sender)}>Отправить</button>
+							<button onClick={() => send(message, to)}>Отправить</button>
 						</div>
 					</div>
 				</div>

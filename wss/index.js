@@ -1,5 +1,6 @@
 var WebSocketServer = require("websocket").server
 var http = require("http")
+const _ = require("lodash")
 
 var server = http.createServer(function (request, response) {
 	console.log(new Date() + " Received request for " + request.url)
@@ -34,16 +35,36 @@ wsServer.on("request", function (request) {
 	}
 
 	var connection = request.accept("echo-protocol", request.origin)
+
 	console.log(new Date() + " Connection accepted.")
 	connection.on("message", function (message) {
 		if (message.type === "utf8") {
-			console.log("Received Message: " + message.utf8Data)
-			connection.sendUTF(message.utf8Data)
+			try {
+				console.log("Received Message: " + message.utf8Data)
+
+				const jsonMessage = JSON.parse(message.utf8Data)
+				console.log(wsServer)
+
+				if (_.get(jsonMessage, "type", "") === "auth") {
+					console.log(_.get(jsonMessage, "client.id"))
+					connection.id = _.get(jsonMessage, "client.id")
+				} else {
+					const reciever = _.get(wsServer, "connections", []).find((e) => e.id === _.get(jsonMessage, "to", ""))
+					console.log("jsonMessage", jsonMessage)
+					console.log(connection.id)
+					if (reciever) {
+						reciever.sendUTF(message.utf8Data)
+					}
+				}
+			} catch (error) {
+				console.log(error)
+			}
 		} else if (message.type === "binary") {
 			console.log("Received Binary Message of " + message.binaryData.length + " bytes")
 			connection.sendBytes(message.binaryData)
 		}
 	})
+
 	connection.on("close", function (reasonCode, description) {
 		console.log(new Date() + " Peer " + connection.remoteAddress + " disconnected.")
 	})
