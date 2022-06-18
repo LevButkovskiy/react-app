@@ -4,6 +4,7 @@ import {useEffect, useRef, useState} from "react"
 
 import WSClient from "../../modules/wsc"
 import {apiRequest} from "../../utils/request"
+import styles from "./styles.module.scss"
 
 const params = [
 	{title: "Местоположение", key: "name"},
@@ -47,12 +48,14 @@ export default function WeatherPage() {
 
 	return (
 		<Space direction='vertical'>
-			{params.map(({title, key, measure}) => (
-				<div onClick={send}>
-					<b>{title}: </b>
-					{_.get(weather, key, "")} {measure}
-				</div>
-			))}
+			<div className={styles.weather}>
+				{params.map(({title, key, measure}) => (
+					<div onClick={send}>
+						<b>{title}: </b>
+						{_.get(weather, key, "")} {measure}
+					</div>
+				))}
+			</div>
 			{messages}
 		</Space>
 	)

@@ -1,4 +1,4 @@
-import WeatherPage from "../core/components/weather"
+import WeatherPage from "../core/components/WeatherPage"
 
 export default function Page() {
 	return <WeatherPage />

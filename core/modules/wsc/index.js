@@ -27,11 +27,11 @@ export default class WSClient extends EventEmitter {
 
 	onMessage(e) {
 		if (typeof e.data === "string") {
-			this.emit("message", e.data)
+			this.emit("message", JSON.parse(e.data))
 		}
 	}
 
 	send(data = "") {
-		this.client.send(data)
+		this.client.send(JSON.stringify(data))
 	}
 }
