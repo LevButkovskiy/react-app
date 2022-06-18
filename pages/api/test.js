@@ -12,7 +12,7 @@ handler.get(async (req, res) => {
 
 		ls.stdout.on("data", (data) => {
 			console.log(`stdout: ${data}`)
-			const cd = spawn("cd..")
+			const cd = spawn("cd..", [])
 			cd.stdout.on("data", (data) => {
 				console.log(`stdout: ${data}`)
 			})
