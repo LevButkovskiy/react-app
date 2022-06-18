@@ -19,4 +19,6 @@ jobs:
           cd ..
           cd home/react-app/
           git pull
-          docker-compose up -d --build
+          docker-compose up -d --build app
+          docker-compose up -d --build wss
+
