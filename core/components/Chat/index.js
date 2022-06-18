@@ -6,6 +6,7 @@ import {useEffect, useRef, useState} from "react"
 import WSClient from "../../modules/wsc"
 import {apiRequest} from "../../utils/request"
 import Container from "../UI/Container"
+import Header from "./Header.js"
 import styles from "./styles.module.scss"
 
 export default function Chat() {
@@ -30,16 +31,20 @@ export default function Chat() {
 
 		const messages = document.getElementById("messages")
 		const form = document.getElementById("form")
+		const header = document.getElementById("header")
 
-		if (messages && form) {
-			messages.style.height = `calc(100% - ${form.offsetHeight}px)`
+		if (messages && header) {
+			messages.style.height = `calc(100% - ${form.offsetHeight}px - ${header.offsetHeight}px)`
 		}
 	}, [])
 
 	const send = (message = "", to = "") => {
-		const data = {message, from: _.get(user, "id"), to: to, createdAt: new Date()}
-		setMessages((prev) => [...prev, data])
-		wsClient.current.send(data)
+		if (message) {
+			const data = {message, from: _.get(user, "id"), to: to, createdAt: new Date()}
+			setMessages((prev) => [...prev, data])
+			wsClient.current.send(data)
+			setMessage("")
+		}
 	}
 
 	useEffect(() => {
@@ -55,6 +60,7 @@ export default function Chat() {
 				<div className={styles.chat}>
 					<div className={styles.contacts}>fd</div>
 					<div className={styles.messenger}>
+						<Header name={to} />
 						<div className={styles.messages} id='messages'>
 							{messages.map(({message, from, createdAt}) => (
 								<div className={`${styles.message} ${from === _.get(user, "id") ? styles.personal : styles.other}`}>

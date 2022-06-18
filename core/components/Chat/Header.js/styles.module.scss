@@ -1,0 +1,34 @@
+.header {
+	background: white;
+	height: 56px;
+	border-left: 1px solid #f5f5f5;
+
+	display: flex;
+
+	padding: 8px 16px;
+
+	.avatar {
+		background: #f5f5f5;
+
+		width: 40px;
+		height: 40px;
+		border-radius: 20px;
+	}
+
+	.reciever {
+		margin-left: 16px;
+
+		.name {
+			font-weight: 600;
+			font-size: 16px;
+			line-height: 20px;
+		}
+
+		.online {
+			font-weight: 400;
+			font-size: 14px;
+			line-height: 18px;
+			color: #707991;
+		}
+	}
+}
