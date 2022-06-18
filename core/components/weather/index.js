@@ -34,6 +34,7 @@ export default function WeatherPage() {
 
 		if (!wsClient.current) {
 			wsClient.current = new WSClient()
+			wsClient.current.connect()
 			wsClient.current.on("message", (data) => {
 				setMessages((prev) => [...prev, data])
 			})

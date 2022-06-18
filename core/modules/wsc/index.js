@@ -5,7 +5,6 @@ import {w3cwebsocket as W3CWebSocket} from "websocket"
 export default class WSClient extends EventEmitter {
 	constructor() {
 		super()
-		this.connect()
 	}
 
 	connect() {
