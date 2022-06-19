@@ -35,8 +35,8 @@ export default class WSClient extends EventEmitter {
 
 	onMessage(e) {
 		if (typeof e.data === "string") {
+			console.log("data", e.data)
 			const res = JSON.parse(e.data)
-			console.log("res", res)
 			this.emit(res.type, res.data)
 		}
 	}

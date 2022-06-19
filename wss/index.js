@@ -55,7 +55,7 @@ wsServer.on("request", function (request) {
 					connections.map((conn) => conn.sendUTF(prepareData("online", onlineUsers)))
 				} else {
 					const reciever = _.get(wsServer, "connections", []).find((e) => e.id === _.get(jsonMessage, "to", ""))
-					reciever?.sendUTF(prepareData("message", message.utf8Data))
+					reciever?.sendUTF(prepareData("message", jsonMessage))
 				}
 			} catch (error) {
 				console.log(error)
