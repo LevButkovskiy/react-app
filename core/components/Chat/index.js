@@ -2,11 +2,14 @@ import {Space, message} from "antd"
 import _ from "lodash"
 import moment from "moment"
 import {useEffect, useRef, useState} from "react"
+import {useSelector} from "react-redux"
 
 import WSClient from "../../modules/wsc"
 import {apiRequest} from "../../utils/request"
+import Avatar from "../UI/Avatar"
 import Container from "../UI/Container"
-import Header from "./Header.js"
+import Form from "./Form"
+import Header from "./Header/"
 import styles from "./styles.module.scss"
 
 export default function Chat() {
@@ -16,6 +19,12 @@ export default function Chat() {
 	const [to, setTo] = useState("")
 	const wsClient = useRef(null)
 
+	const userf = useSelector((state) => state.user.profile)
+
+	useEffect(() => {
+		console.log("userf", userf)
+	}, [userf])
+
 	useEffect(() => {
 		const params = new URLSearchParams(location.search)
 		const id = params.get("user")
@@ -24,7 +33,6 @@ export default function Chat() {
 			wsClient.current = new WSClient()
 			wsClient.current.connect({id: id})
 			wsClient.current.on("message", (data) => {
-				console.log(data)
 				setMessages((prev) => [...prev, data])
 			})
 		}
@@ -33,14 +41,14 @@ export default function Chat() {
 		const form = document.getElementById("form")
 		const header = document.getElementById("header")
 
-		if (messages && header) {
+		if (messages && form && header) {
 			messages.style.height = `calc(100% - ${form.offsetHeight}px - ${header.offsetHeight}px)`
 		}
 	}, [])
 
-	const send = (message = "", to = "") => {
+	const send = (message = "") => {
 		if (message) {
-			const data = {message, from: _.get(user, "id"), to: to, createdAt: new Date()}
+			const data = {message, from: _.get(user, "id"), to, createdAt: new Date()}
 			setMessages((prev) => [...prev, data])
 			wsClient.current.send(data)
 			setMessage("")
@@ -56,31 +64,38 @@ export default function Chat() {
 
 	return (
 		<div className={styles.page}>
-			<Container>
-				<div className={styles.chat}>
-					<div className={styles.contacts}>fd</div>
-					<div className={styles.messenger}>
-						<Header name={to} />
-						<div className={styles.messages} id='messages'>
-							{messages.map(({message, from, createdAt}) => (
-								<div className={`${styles.message} ${from === _.get(user, "id") ? styles.personal : styles.other}`}>
-									<div className={styles.content}>
-										<div className={styles.sender}>{from}</div>
-										<div>{message}</div>
-										<div className={styles.date}>{moment(createdAt).format("HH:mm")}</div>
-									</div>
-								</div>
-							))}
+			<div className={styles.chat}>
+				<div className={styles.contacts}>
+					{["43", "42"].map((contact) => (
+						<div className={styles.contact} onClick={() => setTo(contact)}>
+							<Avatar />
+							<div className={styles.info}>
+								<div className={styles.name}>{contact}</div>
+								<div className={styles.lastMessage}>Last message</div>
+							</div>
 						</div>
-						<div className={styles.form} id='form'>
-							<input className={styles.input} value={message} onChange={(e) => setMessage(_.get(e, "target.value", ""))} />
-							<input value={to} onChange={(e) => setTo(_.get(e, "target.value", ""))} />
-
-							<button onClick={() => send(message, to)}>Отправить</button>
-						</div>
-					</div>
+					))}
 				</div>
-			</Container>
+				<div className={styles.messenger}>
+					<Header name={to} />
+					<div className={styles.messages} id='messages'>
+						{messages.map(({message, from, createdAt}) => (
+							<div className={`${styles.message} ${from === _.get(user, "id") ? styles.personal : styles.other}`}>
+								<div className={styles.content}>
+									<div className={styles.sender}>{from}</div>
+									<div>{message}</div>
+									<div className={styles.date}>{moment(createdAt).format("HH:mm")}</div>
+								</div>
+							</div>
+						))}
+					</div>
+					{/* <div className={styles.form} id='form'>
+							<input className={styles.input} value={message} onChange={(e) => setMessage(_.get(e, "target.value", ""))} />
+							<button onClick={() => send(message)}>Отправить</button>
+						</div> */}
+					<Form id='form' value={message} setValue={setMessage} onFinish={() => send(message)} />
+				</div>
+			</div>
 		</div>
 	)
 }
