@@ -30,6 +30,12 @@ const prepareData = (type, data) => {
 	return JSON.stringify({type, data})
 }
 
+const updateOnline = () => {
+	const connections = _.get(wsServer, "connections", [])
+	const onlineUsers = connections.map((e) => e.id)
+	connections.map((conn) => conn.sendUTF(prepareData("online", onlineUsers)))
+}
+
 wsServer.on("request", function (request) {
 	if (!originIsAllowed(request.origin)) {
 		// Make sure we only accept requests from an allowed origin
@@ -50,9 +56,7 @@ wsServer.on("request", function (request) {
 
 				if (_.get(jsonMessage, "type", "") === "auth") {
 					connection.id = _.get(jsonMessage, "client.id")
-					const connections = _.get(wsServer, "connections", [])
-					const onlineUsers = connections.map((e) => e.id)
-					connections.map((conn) => conn.sendUTF(prepareData("online", onlineUsers)))
+					updateOnline()
 				} else {
 					const reciever = _.get(wsServer, "connections", []).find((e) => e.id === _.get(jsonMessage, "to", ""))
 					reciever?.sendUTF(prepareData("message", jsonMessage))
@@ -67,6 +71,6 @@ wsServer.on("request", function (request) {
 	})
 
 	connection.on("close", function (reasonCode, description) {
-		console.log(new Date() + " Peer " + connection.remoteAddress + " disconnected.")
+		updateOnline()
 	})
 })
