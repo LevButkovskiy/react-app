@@ -13,27 +13,25 @@ import Header from "./Header/"
 import styles from "./styles.module.scss"
 
 export default function Chat() {
-	const [user, setUser] = useState({})
 	const [message, setMessage] = useState("")
 	const [messages, setMessages] = useState([])
+	const [onlineUsers, setOnlineUsers] = useState([])
 	const [to, setTo] = useState("")
 	const wsClient = useRef(null)
 
-	const userf = useSelector((state) => state.user.profile)
+	const user = useSelector((state) => state.user.profile)
 
 	useEffect(() => {
-		console.log("userf", userf)
-	}, [userf])
-
-	useEffect(() => {
-		const params = new URLSearchParams(location.search)
-		const id = params.get("user")
-		setUser({id})
-		if (!wsClient.current) {
+		console.log(wsClient.current)
+		if (!_.get(wsClient, "current.user.id") && user.id) {
 			wsClient.current = new WSClient()
-			wsClient.current.connect({id: id})
+			wsClient.current.connect({id: _.get(user, "id")})
 			wsClient.current.on("message", (data) => {
+				console.log("message", data)
 				setMessages((prev) => [...prev, data])
+			})
+			wsClient.current.on("online", (data) => {
+				setOnlineUsers((data || []).filter((id) => id !== _.get(user, "id")))
 			})
 		}
 
@@ -44,7 +42,7 @@ export default function Chat() {
 		if (messages && form && header) {
 			messages.style.height = `calc(100% - ${form.offsetHeight}px - ${header.offsetHeight}px)`
 		}
-	}, [])
+	}, [user])
 
 	const send = (message = "") => {
 		if (message) {
@@ -66,7 +64,7 @@ export default function Chat() {
 		<div className={styles.page}>
 			<div className={styles.chat}>
 				<div className={styles.contacts}>
-					{["43", "42"].map((contact) => (
+					{onlineUsers.map((contact) => (
 						<div className={styles.contact} onClick={() => setTo(contact)}>
 							<Avatar />
 							<div className={styles.info}>

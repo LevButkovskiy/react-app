@@ -11,8 +11,8 @@ export default class WSClient extends EventEmitter {
 	connect(user = {}) {
 		console.log(user)
 		this.user = user
-		// this.client = new W3CWebSocket("ws://localhost:8080/", "echo-protocol", "a", "b", "c", "d")
 		this.client = new W3CWebSocket("ws://109.107.174.238:8080/", "echo-protocol")
+		// this.client = new W3CWebSocket("ws://localhost:8080/", "echo-protocol")
 
 		this.client.onerror = function (error) {
 			console.log("Connect Error: " + error.toString())
@@ -35,7 +35,9 @@ export default class WSClient extends EventEmitter {
 
 	onMessage(e) {
 		if (typeof e.data === "string") {
-			this.emit("message", JSON.parse(e.data))
+			const res = JSON.parse(e.data)
+			console.log("res", res)
+			this.emit(res.type, res.data)
 		}
 	}
 

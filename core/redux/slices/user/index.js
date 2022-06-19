@@ -5,6 +5,7 @@ const initialState = {
 		id: "",
 		name: "",
 	},
+	initial: true,
 }
 
 const getUser = createAsyncThunk("user/getUser", async () => {

@@ -43,18 +43,14 @@ wsServer.on("request", function (request) {
 				console.log("Received Message: " + message.utf8Data)
 
 				const jsonMessage = JSON.parse(message.utf8Data)
-				console.log(wsServer)
 
 				if (_.get(jsonMessage, "type", "") === "auth") {
-					console.log(_.get(jsonMessage, "client.id"))
 					connection.id = _.get(jsonMessage, "client.id")
+					const onlineUsers = currentConnections.map((e) => e.id)
+					_.get(wsServer, "connections", []).map((conn) => conn.sendUTF(JSON.stringify({type: "online", data: onlineUsers})))
 				} else {
 					const reciever = _.get(wsServer, "connections", []).find((e) => e.id === _.get(jsonMessage, "to", ""))
-					console.log("jsonMessage", jsonMessage)
-					console.log(connection.id)
-					if (reciever) {
-						reciever.sendUTF(message.utf8Data)
-					}
+					reciever?.sendUTF(JSON.stringify({type: "message", data: message.utf8Data}))
 				}
 			} catch (error) {
 				console.log(error)
