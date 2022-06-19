@@ -26,6 +26,10 @@ function originIsAllowed(origin) {
 	return true
 }
 
+const prepareData = (type, data) => {
+	return JSON.stringify({type, data})
+}
+
 wsServer.on("request", function (request) {
 	if (!originIsAllowed(request.origin)) {
 		// Make sure we only accept requests from an allowed origin
@@ -46,11 +50,12 @@ wsServer.on("request", function (request) {
 
 				if (_.get(jsonMessage, "type", "") === "auth") {
 					connection.id = _.get(jsonMessage, "client.id")
-					const onlineUsers = currentConnections.map((e) => e.id)
-					_.get(wsServer, "connections", []).map((conn) => conn.sendUTF(JSON.stringify({type: "online", data: onlineUsers})))
+					const connections = _.get(wsServer, "connections", [])
+					const onlineUsers = connections.map((e) => e.id)
+					connections.map((conn) => conn.sendUTF(prepareData("online", onlineUsers)))
 				} else {
 					const reciever = _.get(wsServer, "connections", []).find((e) => e.id === _.get(jsonMessage, "to", ""))
-					reciever?.sendUTF(JSON.stringify({type: "message", data: message.utf8Data}))
+					reciever?.sendUTF(prepareData("message", message.utf8Data))
 				}
 			} catch (error) {
 				console.log(error)
