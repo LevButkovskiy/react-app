@@ -24,7 +24,6 @@ const getWindDirection = (deg = 0) => {
 }
 
 const getWeather = async ({lat = 0, lon = 0, units = "metric", lang = "ru", API_KEY = process.env.OPEN_WEATHER_API_KEY}) => {
-	console.log(lat, lon)
 	const data = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${units}&lang=${lang}`)
 		.then((res) => res.json())
 		.then((res) => ({

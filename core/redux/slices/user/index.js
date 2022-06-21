@@ -1,21 +1,24 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit"
 
+import {apiRequest} from "../../../utils/request"
+
 const initialState = {
 	profile: {
-		id: "",
+		_id: "",
 		name: "",
 	},
 	initial: true,
 }
 
 const getUser = createAsyncThunk("user/getUser", async () => {
-	const profile = {id: localStorage.getItem("user")}
+	console.log("getUser slice")
+	const profile = JSON.parse(localStorage.getItem("user"))
 	return {profile}
 })
 
-const setUser = createAsyncThunk("user/setUser", async (profile) => {
-	localStorage.setItem("user", profile.id)
-	return {profile}
+const setUser = createAsyncThunk("user/setUser", async (user) => {
+	localStorage.setItem("user", JSON.stringify(user))
+	return {profile: user}
 })
 
 export const asyncActions = {
@@ -28,7 +31,7 @@ export default createSlice({
 	initialState,
 	reducers: {
 		// setUser: (state, {payload}) => {
-		// 	localStorage.setItem("user", payload.id)
+		// 	localStorage.setItem("user", payload._id)
 		// 	state.profile = payload
 		// },
 	},

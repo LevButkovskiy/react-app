@@ -9,11 +9,12 @@ export default function App({Component, pageProps}) {
 	const {profile: user, loading: loading} = useSelector((state) => state.user)
 
 	useEffect(() => {
+		console.log("getUser")
 		dispatch(asyncActions.getUser())
 	}, [])
 
 	useEffect(() => {
-		if (loading == false && !user.id && !/login/.test(window.location.pathname)) {
+		if (loading == false && !user._id && !/login/.test(window.location.pathname)) {
 			window.location.href = "/login"
 		}
 	}, [user])

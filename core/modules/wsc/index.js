@@ -30,7 +30,7 @@ export default class WSClient extends EventEmitter {
 	onOpen() {
 		console.log("WebSocket Client Connected")
 		console.log(this.user)
-		this.send({type: "auth", client: {id: _.get(this.user, "id", "")}})
+		this.send({type: "auth", client: {_id: _.get(this.user, "_id", "")}})
 	}
 
 	onMessage(e) {

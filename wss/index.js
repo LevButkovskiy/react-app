@@ -2,6 +2,8 @@ var WebSocketServer = require("websocket").server
 var http = require("http")
 const _ = require("lodash")
 
+const {ObjectID, client, collections, dbName, getColl, connection: mongoConnection} = require("../core/db")
+
 var server = http.createServer(function (request, response) {
 	console.log(new Date() + " Received request for " + request.url)
 	response.writeHead(404)
@@ -32,11 +34,22 @@ const prepareData = (type, data) => {
 
 const updateOnline = () => {
 	const connections = _.get(wsServer, "connections", [])
-	const onlineUsers = connections.map((e) => e.id)
+	const onlineUsers = connections.map((e) => e._id)
 	connections.map((conn) => conn.sendUTF(prepareData("online", onlineUsers)))
 }
 
 wsServer.on("request", function (request) {
+	// new Promise(async (resolve, reject) => {
+	// 	await mongoConnection
+	// 	const coll = await getColl("online")
+	// 	const data = await coll.find({}).toArray()
+	// 	await coll.insertOne({user: "f"})
+	// 	resolve(data)
+	// })
+	// 	.then((data) => {
+	// 		console.log(data)
+	// 	})
+	// 	.catch(console.log)
 	if (!originIsAllowed(request.origin)) {
 		// Make sure we only accept requests from an allowed origin
 		request.reject()
@@ -55,10 +68,10 @@ wsServer.on("request", function (request) {
 				const jsonMessage = JSON.parse(message.utf8Data)
 
 				if (_.get(jsonMessage, "type", "") === "auth") {
-					connection.id = _.get(jsonMessage, "client.id")
+					connection._id = _.get(jsonMessage, "client._id")
 					updateOnline()
 				} else {
-					const reciever = _.get(wsServer, "connections", []).find((e) => e.id === _.get(jsonMessage, "to", ""))
+					const reciever = _.get(wsServer, "connections", []).find((e) => e._id === _.get(jsonMessage, "to", ""))
 					reciever?.sendUTF(prepareData("message", jsonMessage))
 				}
 			} catch (error) {

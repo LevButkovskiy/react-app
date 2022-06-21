@@ -22,16 +22,16 @@ export default function Chat() {
 	const user = useSelector((state) => state.user.profile)
 
 	useEffect(() => {
-		if (!_.get(wsClient, "current.user.id") && user.id) {
+		if (!_.get(wsClient, "current.user._id") && user._id) {
 			wsClient.current = new WSClient()
-			wsClient.current.connect({id: _.get(user, "id")})
+			wsClient.current.connect({_id: _.get(user, "_id")})
 			wsClient.current.on("message", (data) => {
 				console.log("message", data)
 				setMessages((prev) => [...prev, data])
 			})
 			wsClient.current.on("online", (data) => {
 				console.log("online", data)
-				setOnlineUsers((data || []).filter((id) => id !== _.get(user, "id")))
+				setOnlineUsers((data || []).filter((_id) => _id !== _.get(user, "_id")))
 			})
 		}
 
@@ -46,7 +46,7 @@ export default function Chat() {
 
 	const send = (message = "") => {
 		if (message) {
-			const data = {message, from: _.get(user, "id"), to, createdAt: new Date()}
+			const data = {message, from: _.get(user, "_id"), to, createdAt: new Date()}
 			setMessages((prev) => [...prev, data])
 			wsClient.current.send(data)
 			setMessage("")
@@ -80,10 +80,10 @@ export default function Chat() {
 						{messages
 							.filter(
 								({from: messageFrom, to: messageTo}) =>
-									(messageFrom === to && messageTo === _.get(user, "id")) || (messageFrom === _.get(user, "id") && messageTo === to),
+									(messageFrom === to && messageTo === _.get(user, "_id")) || (messageFrom === _.get(user, "_id") && messageTo === to),
 							)
 							.map(({message, from, createdAt}) => (
-								<div className={`${styles.message} ${from === _.get(user, "id") ? styles.personal : styles.other}`}>
+								<div className={`${styles.message} ${from === _.get(user, "_id") ? styles.personal : styles.other}`}>
 									<div className={styles.content}>
 										<div className={styles.sender}>{from}</div>
 										<div>{message}</div>

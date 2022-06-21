@@ -13,7 +13,7 @@ export default function Header() {
 
 	return (
 		<header className={styles.header}>
-			{user.id} <Avatar />
+			{user.login} <Avatar />
 		</header>
 	)
 }
